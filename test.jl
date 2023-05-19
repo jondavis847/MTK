@@ -7,7 +7,9 @@ sc = Spacecraft(
         name=:body,
         J=1000 * I(3),
         q=[0, 0, 0, 1],
-        ω=zeros(3)
+        ω=zeros(3),
+        r = [-3.9292738554734, 5.71264013167723, 1.31199443874228] *1e6,
+        v = [84.5551344721184, 1749.4937756303016, -7311.912202797997],
     ),
     thrusters=[
         Thruster(
@@ -62,7 +64,8 @@ sc = Spacecraft(
     ),
     controller=Controller(
         name=:controller
-    )
+    ),
+    gravity = TwoBody()
 )
 
 make!(sc)
