@@ -74,6 +74,6 @@ dispersions = Dict(
     scalarize(sc.body.sys.Hb) .=> Normal.(zeros(3), sc.body.J * [0.01, 0.01, 0.01] / 3)
 )
 
-sol, sim = simulate(sc, (0, 500), dispersions=dispersions, nruns=30);
+sol, sim = simulate(sc, (0, 500));
 
 #animate_sc(sc,sol)

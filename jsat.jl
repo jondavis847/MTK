@@ -40,7 +40,7 @@ function make(C::Body)
     @variables q(t)[1:4] = C.q #quaternion
     @variables ω(t)[1:3] = C.ω #rates    
     @variables Hb(t)[1:3] = C.J * C.ω #body momentum
-    @variables Hi(t)[1:3] = zeros(3)#internal momentum 
+    @variables Hi(t)[1:3] = zeros(3) #internal momentum 
     @variables Hs(t)[1:3] = zeros(3) #system momentum
     @variables T(t)[1:3] = zeros(3)#torque
     @variables r(t)[1:3] = C.r
@@ -124,7 +124,7 @@ function make(C::ReactionWheel)
     @variables u(t) = 0#input current command
     @variables Tm(t) = 0 #wheel torque in wheel frame
     @variables T(t)[1:3] = zeros(3)#wheel reaction torque in body frame
-    @variables H(t)[1:3] = zeros(3)#output internal momentum
+    @variables H(t)[1:3] = zeros(3) #output internal momentum
     @variables ω(t) = C.ω #wheel speed
 
     @parameters a[1:3] = normalize(C.a) #axis of rotation
