@@ -1,47 +1,173 @@
-function myclick() {
-    // Create WebSocket connection.
-    console.log("Connecting to jsat");
-    
-    const socket = new WebSocket("ws://127.0.0.1:8081");
+function init() {
+    document.getElementById('connect_button').onclick = function () { connect_to_jsat('connect'); };
+    document.getElementById('simulate_button').onclick = function () { connect_to_jsat('simulate'); };
+    document.getElementById('plot_state').onclick = function () { connect_to_jsat('plot'); };
+}
+window.onload = init;
 
-    // Connection opened
-    socket.addEventListener("open", (event) => {    
-    });
 
-    // Listen for messages
-    socket.addEventListener("message", (event) => {
-        var obj = JSON.parse(event.data)
-        if (obj.type == "console"){
-            console.log(obj.data);
-        } else if (obj.type == "data") {
-            console.log("Received Data")
-            jsat_plot(obj.data.time, obj.data.quat)
-        }
-    });
+function connect_to_jsat(type) {
+    var log = document.getElementById('console_log');
+    switch (type) {
+        case 'connect':
+            // Create WebSocket connection.    
+            log.value += '\nconnecting to jsat...';
+            socket = new WebSocket("ws://127.0.0.1:8081");
+
+            // Connection errored
+            socket.addEventListener("error", (event) => {
+                log.value += 'websocket error :('
+            });
+
+            // Connection opened
+            socket.addEventListener("open", (event) => {
+                log.value += 'done!';
+                var status = document.getElementById('connect_status');
+                status.innerHTML = "connected";
+                status.style.color = "lime";
+            });
+            // Connection closed
+            socket.addEventListener("close", (event) => {
+                log.value += '\nwebsocket closed!';
+                var status = document.getElementById('connect_status');
+                status.innerHTML = "disconnected";
+                status.style.color = "crimson";
+            });
+
+            // Listen for messages
+            socket.addEventListener("message", (event) => {
+                var obj = JSON.parse(event.data)
+                switch (obj.type) {
+                    case 'console':
+                        log.value += '\n' + (obj.data);
+                        break;
+                    case 'data':
+                        log.value += '\nreceived data from jsat server';
+                        log.value += '\nplotting...';
+                        jsat_plot(obj.data)
+                        log.value += 'done!';
+                        break;
+                    case 'states':
+                        log.value += '\nreceived states from jsat server';
+                        var select = document.getElementById("state_select");
+                        var data = obj.data;
+                        for (i of data.sort()) {
+                            var opt = document.createElement('option')
+                            opt.value = i;
+                            opt.innerHTML = i;
+                            select.appendChild(opt);
+                        }
+                        break;
+                }
+            });
+            break;
+        case 'simulate':            
+            sc = get_form_data()
+            socket.send(JSON.stringify({ "type": "simulate", "data": {"sc": sc }}))            
+            break;
+        case 'plot':
+            var select = document.getElementById("state_select");            
+            socket.send(JSON.stringify({ "type": "plot", "data": select.value }))
+            break;
+    }
 }
 
-function jsat_plot(x_data,y_data) {
-
+function jsat_plot(data) {
+    var x_data = data.time;
+    var y_data = data.data;
+    var name = data.name;
     // Check if array of arrays
     if (Array.isArray(y_data[0])) {
         var data = [];
         for (let i = 0; i < y_data[0].length; i++) {
-            data.push({x:x_data, y:y_data.map(x=>x[i]),mode:"lines"})
+            data.push({ x: x_data, y: y_data.map(x => x[i]), xaxis: 'x' + (i + 1), yaxis: 'y' + (i + 1), mode: "lines", type: "scatter" })
         }
     } else {
-        var data = [{x:x_data,y:y_data,mode:"lines"}]
-    }    
-    
+        var data = [{ x: x_data, y: y_data, mode: "lines" }]
+    }
+
     // Define Layout
     var layout = {
-        xaxis: {title: "Time (s)"},    
-        title: "q_b2i",
-        template: plotly_dark
+        title: name,
+        grid: { rows: y_data[0].length, columns: 1, pattern: 'independent' },
+        template: plotly_dark,
     };
     console.log("Plotting")
-    Plotly.newPlot("plots", data, layout);    
+    Plotly.newPlot("plots", data, layout, { scrollZoom: true });
 }
 
+function get_form_data() {
+    var sc = {
+        body: {
+            name: document.getElementById("body_name").value,
+            ixx: document.getElementById("ixx").value,
+            iyy: document.getElementById("iyy").value,
+            izz: document.getElementById("izz").value,
+            ixy: document.getElementById("ixy").value,
+            ixz: document.getElementById("ixz").value,
+            iyz: document.getElementById("iyz").value,
+            q: document.getElementById("quat").value,
+            w: document.getElementById("rate").value,
+            r: document.getElementById("pos").value,
+            v: document.getElementById("vel").value,
+        },
+        thrusters: [
+            {
+                name: document.getElementById("thr1_name").value,
+                F: document.getElementById("thr1_F").value,
+                r: document.getElementById("thr1_r").value,
+                R: document.getElementById("thr1_R").value,
+            },
+            {
+                name: document.getElementById("thr2_name").value,
+                F: document.getElementById("thr2_F").value,
+                r: document.getElementById("thr2_r").value,
+                R: document.getElementById("thr2_R").value,
+            },
+            {
+                name: document.getElementById("thr3_name").value,
+                F: document.getElementById("thr3_F").value,
+                r: document.getElementById("thr3_r").value,
+                R: document.getElementById("thr3_R").value,
+            },
+            {
+                name: document.getElementById("thr4_name").value,
+                F: document.getElementById("thr4_F").value,
+                r: document.getElementById("thr4_r").value,
+                R: document.getElementById("thr4_R").value,
+            },
+        ],
+        reactionwheels: [{
+            name: document.getElementById("rw1_name").value,
+            J: document.getElementById("rw1_J").value,
+            kt: document.getElementById("rw1_kt").value,
+            a: document.getElementById("rw1_a").value,
+            w: document.getElementById("rw1_w").value,
+        },
+        {
+            name: document.getElementById("rw2_name").value,
+            J: document.getElementById("rw2_J").value,
+            kt: document.getElementById("rw2_kt").value,
+            a: document.getElementById("rw2_a").value,
+            w: document.getElementById("rw2_w").value,
+        },
+        {
+            name: document.getElementById("rw3_name").value,
+            J: document.getElementById("rw3_J").value,
+            kt: document.getElementById("rw3_kt").value,
+            a: document.getElementById("rw3_a").value,
+            w: document.getElementById("rw3_w").value,
+        }],
+        iru: {
+            name: document.getElementById("iru_name").value,
+            sigma: document.getElementById("iru_noise").value,
+        },
+        controller: {
+            name: document.getElementById("controller").value,
+        },
+    }
+    return sc;
+}
 
 const plotly_dark = {
     "data": {

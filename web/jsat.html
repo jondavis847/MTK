@@ -1,18 +1,325 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-  <script>console.log("Welcome")</script>  
   <link rel="stylesheet" href="jsat.css">
   <script src="jsat.js"></script>
   <script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8"></script>
 </head>
+
 <body>
-  <div class="top_bar" id="top_bar">
-    <button onclick="myclick()"> click me !</button>
-  </div>  
-  <div class = "config" id="config"></div>
-  <div class = "plots" id="plots"></div>
-  <div class = "console" id="console"></div>
-  
+  <div class="top_bar" id="top_bar">jsat
+    <button id="connect_button" class="connect_button"> connect </button>
+    <button id="connect_status" class="connect_status"> disconnected </button>
+  </div>
+  <div class="main_div" id="main_div">
+    <div class="config" id="config">
+      <div id="body" class="component_div body_div">
+        <p class="component_text">body</p>
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="body_name" name="name" value="body"><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="ixx">ixx:</label><br>
+                <input class="form_input" type="text" id="ixx" name="ixx" value=1000><br>
+              </td>
+              <td>
+                <label class="form_font" for="iyy">iyy:</label><br>
+                <input class="form_input" type="text" id="iyy" name="iyy" value=1000><br>
+              </td>
+              <td>
+                <label class="form_font" for="izz">izz:</label><br>
+                <input class="form_input" type="text" id="izz" name="izz" value=1000><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="ixy">ixy:</label><br>
+                <input class="form_input" type="text" id="ixy" name="ixy" value=0><br>
+              </td>
+              <td>
+                <label class="form_font" for="ixz">ixz:</label><br>
+                <input class="form_input" type="text" id="ixz" name="ixz" value=0><br>
+              </td>
+              <td>
+                <label class="form_font" for="iyz">iyz:</label><br>
+                <input class="form_input" type="text" id="iyz" name="iyz" value=0><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="quat">initial quaternion:</label><br>
+                <input class="form_input" type="text" id="quat" name="quat" value=[0,0,0,1]><br>
+              </td>
+              <td>
+                <label class="form_font" for="rate">initial rate:</label><br>
+                <input class="form_input" type="text" id="rate" name="rate" value=[0,0,0]><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="pos">initial position:</label><br>
+                <input class="form_input" type="text" id="pos" name="pos"
+                  value=[-3.9292738554734e6,5.71264013167723e6,1.31199443874228e6] ,><br>
+              </td>
+              <td>
+                <label class="form_font" for="vel">initial velocity:</label><br>
+                <input class="form_input" type="text" id="vel" name="vel"
+                  value=[84.5551344721184,1749.4937756303016,-7311.912202797997]><br>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div id="rw1" class="rw_div component_div">
+        <p class="component_text">reaction wheel</p>
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="rw1_name" name="name" value="rw1"><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="rw1_J">inertia:</label><br>
+                <input class="form_input" type="text" id="rw1_J" name="rw1_J" value=0.25>
+              </td>
+              <td>
+                <label class="form_font" for="rw1_kt">kt:</label><br>
+                <input class="form_input" type="text" id="rw1_kt" name="rw1_kt" value=0.075>
+              </td>
+              <td>
+                <label class="form_font" for="rw1_a">rotation axis:</label><br>
+                <input class="form_input" type="text" id="rw1_a" name="rw1_a" value=[1,0,0]>
+              </td>
+              <td>
+                <label class="form_font" for="rw1_w">initial speed:</label><br>
+                <input class="form_input" type="text" id="rw1_w" name="rw1_w" value=0>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div id="rw2" class="rw_div component_div">
+        <p class="component_text">reaction wheel</p>
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="rw2_name" name="name" value="rw2"><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="rw2_inertia">inertia:</label><br>
+                <input class="form_input" type="text" id="rw2_J" name="rw2_inertia" value=0.25>
+              </td>
+              <td>
+                <label class="form_font" for="rw2_kt">kt:</label><br>
+                <input class="form_input" type="text" id="rw2_kt" name="rw2_kt" value=0.075>
+              </td>
+              <td>
+                <label class="form_font" for="rw2_a">rotation axis:</label><br>
+                <input class="form_input" type="text" id="rw2_a" name="rw2_a" value=[0,1,0]>
+              </td>
+              <td>
+                <label class="form_font" for="rw2_w">initial speed:</label><br>
+                <input class="form_input" type="text" id="rw2_w" name="rw2_w" value=0>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div id="rw3" class="rw_div  component_div">
+        <p class="component_text">reaction wheel</p>
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="rw3_name" name="name" value="rw3"><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="rw3_inertia">inertia:</label><br>
+                <input class="form_input" type="text" id="rw3_J" name="rw3_inertia" value=0.25>
+              </td>
+              <td>
+                <label class="form_font" for="rw3_kt">kt:</label><br>
+                <input class="form_input" type="text" id="rw3_kt" name="rw3_kt" value=0.075>
+              </td>
+              <td>
+                <label class="form_font" for="rw3_a">rotation axis:</label><br>
+                <input class="form_input" type="text" id="rw3_a" name="rw3_a" value=[0,0,1]>
+              </td>
+              <td>
+                <label class="form_font" for="rw3_w">initial speed:</label><br>
+                <input class="form_input" type="text" id="rw3_w" name="rw3_w" value=0>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>      
+      <div id="iru" class="iru_div  component_div">
+        <p class="component_text">iru</p>
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="iru_name" name="name" value="iru"><br>
+              </td>
+              <td>
+                <label class="form_font" for="noise">noise sigma:</label><br>
+                <input class="form_input" type="text" id="iru_noise" name="noise" value=0.01>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div id="controller" class="controller_div  component_div">
+        <p class="component_text">controller</p>
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="controller" name="controller_name" value="controller"><br>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+      <div id="thr1" class="thr_div  component_div">
+        <p class="component_text">thruster</p>       
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="thr1_name" name="name" value="thr1"><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="thr1_F">thrust:</label><br>
+                <input class="form_input" type="text" id="thr1_F" name="thr1_F" value=1>
+              </td>
+              <td>
+                <label class="form_font" for="thr1_r">body position:</label><br>
+                <input class="form_input" type="text" id="thr1_r" name="thr1_r" value=[1,0,-1]>
+              </td>
+              <td>
+                <label class="form_font" for="thr1_R">body rotation:</label><br>
+                <input class="form_input" type="text" id="thr1_R" name="thr1_R" value="[1 0 0 ; 0 1 0 ; 0 0 1]">
+              </td>              
+            </tr>
+          </table>
+        </form>        
+      </div>
+      <div id="thr2" class="thr_div  component_div">
+        <p class="component_text">thruster</p>       
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="thr2_name" name="name" value="thr2"><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="thr2_F">thrust:</label><br>
+                <input class="form_input" type="text" id="thr2_F" name="thr2_F" value=1>
+              </td>
+              <td>
+                <label class="form_font" for="thr2_r">body position:</label><br>
+                <input class="form_input" type="text" id="thr2_r" name="thr2_r" value=[1,0,-1]>
+              </td>
+              <td>
+                <label class="form_font" for="thr2_R">body rotation:</label><br>
+                <input class="form_input" type="text" id="thr2_R" name="thr2_R" value="[1 0 0 ; 0 1 0 ; 0 0 1]">
+              </td>              
+            </tr>
+          </table>
+        </form>        
+      </div>
+      <div id="thr3" class="thr_div  component_div">
+        <p class="component_text">thruster</p>       
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="thr3_name" name="name" value="thr3"><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="thr3_F">thrust:</label><br>
+                <input class="form_input" type="text" id="thr3_F" name="thr3_F" value=1>
+              </td>
+              <td>
+                <label class="form_font" for="thr3_r">body position:</label><br>
+                <input class="form_input" type="text" id="thr3_r" name="thr3_r" value=[1,0,-1]>
+              </td>
+              <td>
+                <label class="form_font" for="thr3_R">body rotation:</label><br>
+                <input class="form_input" type="text" id="thr3_R" name="thr3_R" value="[1 0 0 ; 0 1 0 ; 0 0 1]">
+              </td>              
+            </tr>
+          </table>
+        </form>        
+      </div>
+      <div id="thr4" class="thr_div  component_div">
+        <p class="component_text">thruster</p>       
+        <form class="form">
+          <table class="table">
+            <tr>
+              <td>
+                <label class="form_font" for="name">name:</label><br>
+                <input class="form_input" type="text" id="thr4_name" name="name" value="thr4"><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="form_font" for="thr4_F">thrust:</label><br>
+                <input class="form_input" type="text" id="thr4_F" name="thr4_F" value=1>
+              </td>
+              <td>
+                <label class="form_font" for="thr4_r">body position:</label><br>
+                <input class="form_input" type="text" id="thr4_r" name="thr4_r" value=[1,0,-1]>
+              </td>
+              <td>
+                <label class="form_font" for="thr4_R">body rotation:</label><br>
+                <input class="form_input" type="text" id="thr4_R" name="thr4_R" value="[1 0 0 ; 0 1 0 ; 0 0 1]">
+              </td>              
+            </tr>
+          </table>
+        </form>        
+      </div>
+
+      <button id="simulate_button" class="simulate_button"> simulate </button>
+    </div>
+    <div class="plots" id="plots"></div>
+    <div class="states" id="states">
+      <select class="state_select" name="states" id="state_select" multiple></select>
+      <button id="plot_state" class="plot_state"> plot </button>
+    </div>
+
+    <textarea class="console_log" id="console_log"></textarea>
+
+
 </body>
+
 </html>

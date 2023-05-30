@@ -1,38 +1,217 @@
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 .top_bar {
-    position: absolute;
+    position: fixed;
     top: 0%;
     left: 0%;
     width: 100%;
     height: 6%;
     background: rgba(20, 20, 20, 1);
-    /*border-bottom: .2rem solid rgba(150, 150, 150, 1);*/
+    padding: 0%;
+    margin: 0%;
+    color: white;
+    font-family: 'Courier New', monospace;
+    align-items: middle;
+}
+
+.main_div {
+    position: fixed;
+    top: 6%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background: rgba(40, 40, 40, 1);
+    padding: 0%;
+    margin: 0%
 }
 
 .config {
     position: absolute;
-    top: 6%;
+    top: 0%;
     left: 0%;
     width: 50%;
-    height: 94%;
-    background: rgba(40, 40, 40, 1);
-    /*border-right: .2rem solid rgba(150, 150, 150, 1);*/
+    height: 100%;
+    background: rgba(35, 36, 36, 1);
+    border: solid thin black;
+    padding: 0%;
+    margin: 0%;
+    overflow: auto;
+    scrollbar-color: black;
 }
 
-.console {
+.component_div {
+    position: relative;
+    width: 100%;
+    background: rgba(35, 36, 36, 1);
+    border: solid thin black;
+}
+
+.component_text {
     position: absolute;
-    top: 53%;
-    left: 50%;
-    width: 50%;
-    height: 47%;
-    background: rgba(40, 40, 40, 1);
-    /*border-right: .2rem solid rgba(150, 150, 150, 1);*/
+    width: 100%;
+    left: 0%;
+    top: 0%;
+    color: palegoldenrod;
+    font-family: 'Courier New', monospace;
+    font-size: small;
+    text-align: right;
+    padding: 0%;
+    margin: 0%;
+}
+
+.body_div {
+    height: 28%;
+}
+
+.rw_div {
+    height: 12%;
+}
+
+.iru_div {
+    height: 6%;
+}
+
+.thr_div {
+    height: 12%;
+}
+
+.form {
+    position: absolute;
+    height: 100%;
+    display: inline;
+    float: left;
+    font-size: small;
+}
+
+.form_font {
+    color: aquamarine;
+    font-family: 'Courier New', monospace;
+}
+
+.form_input {
+    color: white;
+    background-color: rgba(35, 36, 36, 1);
+    ;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: small;
+    border: solid thin white
+}
+
+.console_log {
+    position: absolute;
+    top: 50%;
+    left: 75%;
+    width: 25%;
+    height: 50%;
+    background-color: rgba(35, 36, 36, 1);
+    color: aquamarine;
+    border: solid thin black;
+    padding: 0%;
+    margin: 0%;
+    overflow:auto;
 }
 
 .plots {
     position: absolute;
-    top:6%;
-    left:50%;
-    height:47%;
-    width:50%;
-    background: rgba(40, 40, 40, 1);
+    top: 0%;
+    left: 50%;
+    height: 50%;
+    width: 50%;
+    background-color: rgba(35, 36, 36, 1);
+    border: solid thin black;
+    overflow: hidden;
+    padding: 0%;
+    margin: 0%
+}
+
+.states {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    width: 25%;
+    height: 44%;
+    background-color: rgba(35, 36, 35, 1);
+    border: solid black thin;
+    padding: 0%;
+    margin: 0%;
+}
+
+.state_select {
+    position: relative;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 90%;
+    padding: 0%;
+    margin: 0%;
+    background-color: rgba(35, 36, 35, 1);
+    color: aliceblue
+}
+
+.plot_state {
+    background-color: black;
+    border: white thin solid;
+    color: aqua;
+    text-align: center;
+    position: relative;
+    bottom: 0%;
+    left: 0%;
+    width: 100%;
+    height: 10%;
+}
+
+.connect_button {
+    background-color: black;
+    border: white thin solid;
+    color: aqua;
+    text-align: center;
+    position: absolute;
+    bottom: 0%;
+    left: 80%;
+    width: 10%;
+    height: 100%;
+    padding: 0%;
+    margin: 0%;
+}
+
+.simulate_button {
+    background-color: black;
+    border: white thin solid;
+    color: aqua;
+    text-align: center;
+    position: sticky;
+    bottom: 4%;
+    left: 80%;
+    width: 20%;
+    height: 6%;
+    padding: 0%;
+    margin: 0%;
+}
+
+.connect_status {
+    background-color: black;
+    border: none;
+    color: crimson;
+    text-align: center;
+    position: absolute;
+    bottom: 0%;
+    left: 90%;
+    width: 10%;
+    height: 100%;
+    padding: 0%;
+    margin: 0%;
 }
