@@ -5,7 +5,6 @@ function init() {
 }
 window.onload = init;
 
-
 function connect_to_jsat(type) {
     var log = document.getElementById('console_log');
     switch (type) {
@@ -168,6 +167,45 @@ function get_form_data() {
     }
     return sc;
 }
+
+function changeTab(evt, newTab) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+  
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+  
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tab_links");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");      
+    }
+  
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(newTab).style.display = "block";    
+    evt.currentTarget.className += " active";
+  }
+
+  function addSpacecraft() {
+    console.log('test')
+    const button = document.createElement('button');
+    button.innerText = document.getElementById('spacecraft_name').value;
+    button.className = "spacecraft_buttons";
+    console.log(button)
+    document.getElementById("spacecraft_builder_div").appendChild(button);    
+  }
+
+  function component_dropdown() {
+    console.log('test')
+    dropdown = document.getElementById('component_dropdown');
+    console.log(dropdown)
+    dropdown.classList.toggle("show");
+    console.log(dropdown)
+
+  }
 
 const plotly_dark = {
     "data": {
