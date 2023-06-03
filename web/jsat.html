@@ -13,7 +13,7 @@
     <div class="top_bar" id="top_bar">
       <button id="jsat_title" class="jsat_title top_bar_button"> jsat v0.1 </button>
       <div class="tab">
-        <button class="simulation_tab top_bar_button tab_links tab active"
+        <button class="simulation_tab top_bar_button tab_links tab active_border"
           onclick="changeTab(event, 'simulation_tab')">simulation</button>
         <button class="plotting_tab top_bar_button tab_links tab"
           onclick="changeTab(event, 'plotting_tab')">plotting</button>
@@ -31,7 +31,7 @@
         <!-- simulation tab -->
 
         <div class="simulation_tab tabcontent" id="simulation_tab">
-          <textarea class="console_log" id="console_log"></textarea>
+          <textarea class="console_log" id="console_log">welcome to jsat!</textarea>
 
           <!-- simulation options -->
           <div class="simulation_options_div" id="simulation_options_div">
@@ -59,26 +59,62 @@
 
           <!-- spacecraft builder -->
           <div class="spacecraft_builder_div" id="spacecraft_builder_div">
-            <button id="add_spacecraft_button" class="add_spacecraft_button tab" onclick="addSpacecraft()"> +
+            <button id="add_spacecraft_button" class="add_spacecraft_button" onclick="addSpacecraft()"> +
               spacecraft </button>
-            <input class="spacecraft_name form_input" type="text" id="spacecraft_name" name="spacecraft_name"
-              value="enter name">
+            <div class="spacecraft_popup" id="spacecraft_popup">
+              <input class="spacecraft_name form_input submit" type="text" id="spacecraft_name" name="spacecraft_name"
+                placeholder="enter name" onfocus="this.select()">
+              <button id="add_spacecraft_save_button" class="add_spacecraft_save_button"
+                onclick="saveSpacecraft()">save</button>
+              <button id="add_spacecraft_cancel_button" class="add_spacecraft_cancel_button"
+                onclick="cancelSpacecraft()">cancel</button>
+              <script>
+                var sn = document.getElementById("spacecraft_name");
+                sn.addEventListener("keyup", function (event) {
+                  if (event.keyCode === 13) {
+                    event.preventDefault();
+                    document.getElementById("add_spacecraft_save_button").click();
+                  }
+                })
+              </script>
+            </div>
+
           </div>
 
           <!-- component builder -->
           <div class="component_builder_div" id="component_builder_div">
-            <div class="dropdown">
-              <button id="add_component_button" class="add_spacecraft_button tab" onclick="component_dropdown()"> +
-                component </button>
-                <div id="component_dropdown" class = "component_dropdown">
-                  <a href="#" onclick="add_body()">body</a>
-                  <a href="#">reaction wheel</a>
-                  <a href="#">thruster</a>                  
-                </div>
+            <button id="add_component_button" class="add_component_button" onclick="component_menu()"> +
+              component </button>
+            <div class="component_menu" id="component_menu">
+              <button id="add_body_button" class="component_button" onclick="addBody()"> + body </button>
+              <button id="add_rw_button" class="component_button" onclick="addRw()"> + reaction wheel </button>
+              <button id="add_thr_button" class="component_button" onclick="addThr()"> + thruster </button>
+              <button id="cancel_component_button" class="cancel_component_button" onclick="cancelComponentMenu()"> cancel
+              </button>
             </div>
-            <input class="spacecraft_name form_input" type="text" id="component_name" name="component_name"
-              value="enter name">
+            <div class="component_popup" id="component_popup">
+              <input class="component_name form_input submit" type="text" id="component_name" name="component_name"
+                placeholder="enter name" onfocus="this.select()">
+              <button id="add_component_save_button" class="add_component_save_button"
+                onclick="saveComponent()">save</button>
+              <button id="add_component_cancel_button" class="add_component_cancel_button"
+                onclick="cancelComponentPopup()">cancel</button>
+              <script>
+                var cn = document.getElementById("component_name");
+                cn.addEventListener("keyup", function (event) {
+                  if (event.keyCode === 13) {
+                    event.preventDefault();
+                    document.getElementById("add_component_save_button").click();
+                  }
+                })
+              </script>
+            </div>
+
           </div>
+          <!-- component details -->
+          <div id="component_details_div" class="component_details_div">
+          </div>
+
         </div>
 
         <!-- plotting tab -->

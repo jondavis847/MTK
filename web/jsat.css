@@ -36,17 +36,18 @@
 
 .tab button {
     cursor: pointer;
-    transition: 0.3s;
+    /*transition: 0.3s;*/
 }
 
 .tab button:hover {
+    background-color: #404040;
+}
+
+/*
+.tab button.active {
     background-color: #606060;
 }
-
-.tab button.active {
-    background-color: #303030;
-}
-
+*/
 .tabcontent {
     display: none;
 }
@@ -113,7 +114,7 @@
     top: 0%;
     left: 0%;
     width: 25%;
-    height: 100%;
+    height: 70%;
     background: rgba(40, 40, 40, 1);
     padding: 0%;
     margin: 0%;
@@ -135,12 +136,24 @@
     height: 6%;
 }
 
+.saveComponentDetailsButton {
+    background-color: rgba(20, 20, 20, 1);    
+    border: black thin solid;
+    color: aquamarine;
+    font-family: 'Courier New', monospace;    
+    position: relative;
+    top:3%;
+    left: 0%;
+    width: 50%;
+    height: 6%;
+}
+
 .spacecraft_builder_div {
     position: absolute;
     top: 0%;
     left: 25%;
     width: 25%;
-    height: 100%;
+    height: 70%;
     background: rgba(40, 40, 40, 1);
     box-sizing: border-box;
     border: solid thin black;
@@ -154,15 +167,112 @@
     border: solid thin black;
     position: absolute;
     top: 0%;
-    width: 50%;
+    width: 100%;
     height: 5%;
+}
+
+.add_component_button {
+    background: rgba(30, 30, 30, 1);
+    font-family: 'Courier New', monospace;
+    color: aquamarine;
+    box-sizing: border-box;
+    border: solid thin black;
+    position: absolute;
+    top: 0%;
+    width: 100%;
+    height: 5%;
+}
+
+.spacecraft_popup {
+    background: rgba(40, 40, 40, 1);
+    box-sizing: border-box;
+    border: solid thin black;
+    position: absolute;
+    top:5%;
+    width:100%;
+    height:10%;
+    left:0%;
+    display:none;
+    z-index: 1;
+}
+
+.component_popup {
+    background: rgba(40, 40, 40, 1);
+    box-sizing: border-box;
+    border: solid thin black;
+    position: absolute;
+    top:5%;
+    width:100%;
+    height:10%;
+    left:0%;
+    display:none;
+    z-index: 1;
+}
+
+.add_spacecraft_save_button {
+    background: rgba(30, 30, 30, 1);
+    font-family: 'Courier New', monospace;
+    color: aquamarine;
+    box-sizing: border-box;
+    border: solid thin black;
+    position: absolute;
+    top: 50%;
+    left:0%;
+    width: 50%;
+    height: 50%;
+}
+
+.add_component_save_button {
+    background: rgba(30, 30, 30, 1);
+    font-family: 'Courier New', monospace;
+    color: aquamarine;
+    box-sizing: border-box;
+    border: solid thin black;
+    position: absolute;
+    top: 50%;
+    left:0%;
+    width: 50%;
+    height: 50%;
+}
+
+.add_spacecraft_cancel_button {
+    background: rgba(30, 30, 30, 1);
+    font-family: 'Courier New', monospace;
+    color: crimson;
+    box-sizing: border-box;
+    border: solid thin black;
+    position: absolute;
+    left:50%;
+    top: 50%;
+    width: 50%;
+    height: 50%;
+}
+
+.add_component_cancel_button {
+    background: rgba(30, 30, 30, 1);
+    font-family: 'Courier New', monospace;
+    color: crimson;
+    box-sizing: border-box;
+    border: solid thin black;
+    position: absolute;
+    left:50%;
+    top: 50%;
+    width: 50%;
+    height: 50%;
 }
 
 .spacecraft_name {
     position: absolute;
-    left: 50%;
-    width: 50%;
-    height: 5%;
+    left: 0%;
+    width: 100%;
+    height: 50%;
+}
+
+.component_name {
+    position: absolute;
+    left: 0%;
+    width: 100%;
+    height: 50%;
 }
 
 .spacecraft_buttons {
@@ -172,9 +282,26 @@
     left: 0%;
     width: 100%;
     height: 5%;
-    top: 5%;
-    box-sizing: border-box;
+    top: 5%;    
+    font-family: 'Courier New', monospace;
+}
+
+.active_border  {    
+    border: solid thin aquamarine;
+}
+
+.not_active_border {
     border: solid thin black;
+}
+
+.component_buttons {
+    background: rgba(35, 36, 36, 1);
+    color: whitesmoke;
+    position: relative;
+    left: 0%;
+    width: 100%;
+    height: 5%;
+    top: 0%;        
     font-family: 'Courier New', monospace;
 }
 
@@ -183,31 +310,84 @@
     top: 0%;
     left: 50%;
     width: 25%;
-    height: 100%;
+    height: 70%;
     background: rgba(40, 40, 40, 1);
     box-sizing: border-box;
     border: solid thin black;
 }
 
-.component_dropdown {
-    display: none;
-    position: relative;
-    background-color: rgba(40, 40, 40, 1);
-    min-width: 160px;
+.component_div {
+    position: absolute;
+    top:5%;
+    height:95%;
+    width:100%;
+    left:0%;
+    background: rgba(40, 40, 40, 1);
+    box-sizing: border-box;
+    border: solid thin black;
+    display:none;    
+}
+
+.component_menu {
+    position: absolute;
+    top:5%;
+    height:95%;
+    width:100%;
+    left:0%;
+    background: rgba(40, 40, 40, 1);
+    box-sizing: border-box;
+    border: solid thin black;
+    display:none;
     z-index: 1;
 }
 
-.component_dropdown a {
-    color: black;
-    padding: 12px 16px;
-    display: block;
+.component_button {
+    background: rgba(35, 36, 36, 1);
+    color: aquamarine;
+    position: relative;
+    left: 0%;
+    width: 100%;
+    height: 5%;
+    top: 0%;
+    box-sizing: border-box;
+    border: solid thin black;
+    font-family: 'Courier New', monospace;
 }
 
-/* Change color of dropdown links on hover */
-.component_dropdown a:hover {
-    background-color: #ddd;
+.cancel_component_button {
+    background: rgba(35, 36, 36, 1);
+    color: crimson;
+    position: relative;
+    left: 0%;
+    width: 100%;
+    height: 5%;
+    top: 0%;
+    box-sizing: border-box;
+    border: solid thin black;
+    font-family: 'Courier New', monospace;
 }
 
+.component_details_div {
+    position: absolute;
+    top: 0%;
+    left: 75%;
+    width: 25%;
+    height: 70%;
+    background: rgba(40, 40, 40, 1);
+    box-sizing: border-box;
+    border: solid thin black;
+}
+
+.component_details_form_div {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background: rgba(40, 40, 40, 1);
+    box-sizing: border-box;
+    border: solid thin black;
+}
 
 .body_div {
     height: 28%;
@@ -249,16 +429,14 @@
 
 .console_log {
     position: absolute;
-    top: 50%;
-    left: 75%;
-    width: 25%;
-    height: 50%;
+    top: 70%;
+    left: 0%;
+    width: 100%;
+    height: 30%;
     background-color: rgba(35, 36, 36, 1);
-    color: aquamarine;
+    color: white;
     box-sizing: border-box;
-    border: solid thin black;
-    padding: 0%;
-    margin: 0%;
+    border: solid thin black;    
     overflow: auto;
 }
 

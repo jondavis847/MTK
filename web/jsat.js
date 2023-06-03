@@ -1,7 +1,14 @@
+JSAT = {
+    sc:[]
+};
+
+let SPACECRAFT
+let COMPONENT
+
 function init() {
     document.getElementById('connect_button').onclick = function () { connect_to_jsat('connect'); };
     document.getElementById('simulate_button').onclick = function () { connect_to_jsat('simulate'); };
-    document.getElementById('plot_state').onclick = function () { connect_to_jsat('plot'); };
+    //document.getElementById('plot_state').onclick = function () { connect_to_jsat('plot'); };
 }
 window.onload = init;
 
@@ -60,12 +67,12 @@ function connect_to_jsat(type) {
                 }
             });
             break;
-        case 'simulate':            
+        case 'simulate':
             sc = get_form_data()
-            socket.send(JSON.stringify({ "type": "simulate", "data": {"sc": sc }}))            
+            socket.send(JSON.stringify({ "type": "simulate", "data": { "sc": sc } }))
             break;
         case 'plot':
-            var select = document.getElementById("state_select");            
+            var select = document.getElementById("state_select");
             socket.send(JSON.stringify({ "type": "plot", "data": select.value }))
             break;
     }
@@ -171,41 +178,228 @@ function get_form_data() {
 function changeTab(evt, newTab) {
     // Declare all variables
     var i, tabcontent, tablinks;
-  
+
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
+        tabcontent[i].style.display = "none";
     }
-  
+
     // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tab_links");
     for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");      
+        tablinks[i].classList.remove("active_border");
     }
-  
+
     // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(newTab).style.display = "block";    
-    evt.currentTarget.className += " active";
-  }
+    document.getElementById(newTab).style.display = "block";
+    evt.currentTarget.classList.add("active_border");
+}
 
-  function addSpacecraft() {
-    console.log('test')
+function addSpacecraft() {
+    document.getElementById("spacecraft_popup").style.display = "block";
+    document.getElementById("add_spacecraft_button").classList.add("active");
+    document.getElementById("spacecraft_name").focus();
+}
+
+function saveSpacecraft() {
+    //create new spacecraft button
     const button = document.createElement('button');
-    button.innerText = document.getElementById('spacecraft_name').value;
+    const name = document.getElementById('spacecraft_name').value;
+    button.innerText = name;
     button.className = "spacecraft_buttons";
-    console.log(button)
-    document.getElementById("spacecraft_builder_div").appendChild(button);    
-  }
 
-  function component_dropdown() {
-    console.log('test')
-    dropdown = document.getElementById('component_dropdown');
-    console.log(dropdown)
-    dropdown.classList.toggle("show");
-    console.log(dropdown)
+    //place button in div
+    document.getElementById("spacecraft_builder_div").appendChild(button);
+    //hide the popup
+    document.getElementById("spacecraft_popup").style.display = "none";
+    //deactivate button
+    document.getElementById("add_spacecraft_button").classList.remove("active");
+    //reset input field
+    document.getElementById("spacecraft_name").value = "enter name";
 
-  }
+    //create div for new spacecraft to add components
+    const new_div = document.createElement('div');
+    const div_id = name.concat("_div");
+    new_div.id = div_id;
+    new_div.classList.add("component_div");
+    document.getElementById("component_builder_div").appendChild(new_div);
+    //onclick to switch component divs between spacecraft
+    button.onclick = function () {
+        //display none all component_divs
+        comp_divs = document.getElementsByClassName("component_div");
+        for (i = 0; i < comp_divs.length; i++) {
+            comp_divs[i].style.display = "none";
+        }
+        //show this sc component div
+        document.getElementById(div_id).style.display = "block";
+        //set global variable with active element for components to be added to
+        active_spacecraft = document.getElementById(div_id);
+        //unfocus any currently active spacecraft
+        scb = document.getElementsByClassName("spacecraft_buttons");
+        for (i = 0; i < scb.length; i++) {
+            scb[i].classList.remove("active_border");
+            scb[i].classList.add("not_active_border");
+        }
+        //focus new button
+        button.classList.remove("not_active_border");
+        button.classList.add("active_border");
+        
+        //set global sc to this sc
+        SPACECRAFT = JSAT.sc.find(x => x.name === name);    
+    };
+    JSAT.sc.push({name:name})
+    console.log(JSAT)
+    button.click();    
+}
+
+function cancelSpacecraft() {
+    document.getElementById("spacecraft_popup").style.display = "none";
+    document.getElementById("add_spacecraft_button").classList.remove("active");
+}
+
+function component_menu() {
+    cm = document.getElementById("component_menu");
+    if (cm.style.display == "none" || cm.style.display == "") {
+        cm.style.display = "block";
+    } else if (cm.style.display == "block") {
+        cm.style.display = "none";
+    }
+}
+
+function cancelComponentMenu() {
+    document.getElementById("component_menu").style.display = "none";
+}
+
+function cancelComponentPopup() {
+    document.getElementById("component_popup").style.display = "none";
+}
+
+function addComponentInput(table,name,attr,value,comp) {        
+    var tr = document.createElement("tr");    
+
+    //create label    
+    var td1 = document.createElement("td");
+    var l = document.createElement("label");    
+    l.setAttribute('for',comp.concat(name));
+    l.innerHTML = name;
+    l.classList.add("form_font");
+    var brl = document.createElement("br");
+    td1.appendChild(l);    
+    td1.appendChild(brl);    
+
+    //create input    
+    var td2 = document.createElement("td2");
+    var i = document.createElement("input");
+    i.setAttribute('type',"text");    
+    i.id = comp.concat(name);
+    i.setAttribute(attr,value);
+    i.classList.add("form_input");    
+    var bri = document.createElement("br");
+    td2.appendChild(i);    
+    td2.appendChild(bri);    
+    
+    //append to table
+    tr.appendChild(td1);        
+    tr.appendChild(td2);        
+    table.appendChild(tr);  
+    
+    //add onblur event caller to update global SC
+    i.onblur = function() {
+        SPACECRAFT[comp][name] = i.value;
+        //if this is name property, update the button text
+        if (name === "name") {            
+            COMPONENT.innerText = i.value;
+        }
+    }
+}
+
+function addComponent(t) {    
+    //create new spacecraft button
+    const button = document.createElement('button');
+    const name = document.getElementById('component_name').value;
+    button.innerText = name;
+    button.id = SPACECRAFT.name.concat(name);
+    button.className = "component_buttons";
+
+    //add button to component div
+    active_spacecraft.appendChild(button);
+    //hide the popup
+    document.getElementById("component_popup").style.display = "none";
+    //deactivate button
+    document.getElementById("add_component_button").classList.remove("active");
+    //reset input field
+    document.getElementById("component_name").value = "enter name";
+
+    //create div for spacecraft to add new components
+    const newDiv = document.createElement('div');
+    const div_id = name.concat("_div");
+    newDiv.id = div_id;
+    newDiv.classList.add("component_details_form_div");
+
+    //add body to global SC
+    SPACECRAFT.body = {
+        name:name
+    }
+    console.log(t)
+    newDiv.appendChild(t);
+
+    var c = document.createElement("button"); //input element, Submit button    
+    c.innerText = "close";
+    c.classList.add("saveComponentDetailsButton")    
+    c.onclick = function() {     
+        document.getElementById(div_id).style.display = "none";
+        button.classList.remove("active_border");
+        button.classList.add("not_active_border");
+    }    
+    newDiv.appendChild(c);
+
+    document.getElementById("component_details_div").appendChild(newDiv);
+    //onclick to switch component divs between spacecraft
+    button.onclick = function () {        
+        comp_divs = document.getElementsByClassName("component_details_form_div");
+        for (i = 0; i < comp_divs.length; i++) {
+            comp_divs[i].style.display = "none";
+        }
+        document.getElementById(div_id).style.display = "block";
+        //deactivate any currently active component
+        scb = document.getElementsByClassName("component_buttons");        
+        for (i = 0; i < scb.length; i++) {
+            scb[i].classList.remove("active_border");
+            scb[i].classList.add("not_active_border");
+        }
+        //focus new button
+        button.classList.remove("not_active_border");
+        button.classList.add("active_border");     
+        
+        //set global component
+        COMPONENT = button;
+    };        
+    button.click();
+}
+
+function addBody() {
+    document.getElementById("component_menu").style.display = "none";
+    document.getElementById("component_popup").style.display = "block";
+    document.getElementById("component_name").focus();
+
+    //add all input fields for component details
+    var t = document.createElement("table");
+    t.classList.add("table");
+    addComponentInput(t,"name",'placeholder',"enter name","body");
+    addComponentInput(t,"ixx",'placeholder',"enter ixx","body");
+    addComponentInput(t,"iyy",'placeholder',"enter iyy","body");
+    addComponentInput(t,"izz",'placeholder',"enter izz","body");
+    addComponentInput(t,"ixy",'placeholder',"enter ixy","body");
+    addComponentInput(t,"ixz",'placeholder',"enter ixz","body");
+    addComponentInput(t,"iyz",'placeholder',"enter iyz","body");
+    addComponentInput(t,"q0",'placeholder',"enter q0","body");
+    addComponentInput(t,"w0",'placeholder',"enter w0","body");
+    addComponentInput(t,"r0",'placeholder',"enter r0","body");
+    addComponentInput(t,"v0",'placeholder',"enter v0","body");
+
+    document.getElementById("add_component_save_button").onclick = addComponent.bind(this, t);
+}
 
 const plotly_dark = {
     "data": {
