@@ -1,18 +1,22 @@
 JSAT = {
-    sc:[]
+    sc: []
 };
 
-let SPACECRAFT
-let COMPONENT
+
+
+
+let SPACECRAFT // current spacecraft
+let SPACECRAFT_DIV //current spacecraft div
+let COMPONENT // current component 
 
 function init() {
-    document.getElementById('connect_button').onclick = function () { connect_to_jsat('connect'); };
-    document.getElementById('simulate_button').onclick = function () { connect_to_jsat('simulate'); };
-    //document.getElementById('plot_state').onclick = function () { connect_to_jsat('plot'); };
+    document.getElementById('connect_button').onclick = function () { connectToJsat('connect'); };
+    document.getElementById('simulate_button').onclick = function () { connectToJsat('simulate'); };
+    //document.getElementById('plot_state').onclick = function () { connectToJsat('plot'); };
 }
 window.onload = init;
 
-function connect_to_jsat(type) {
+function connectToJsat(type) {
     var log = document.getElementById('console_log');
     switch (type) {
         case 'connect':
@@ -196,12 +200,14 @@ function changeTab(evt, newTab) {
     evt.currentTarget.classList.add("active_border");
 }
 
+// called when user clicks +spacecraft, prompts user for the name, will save and add component on enter or click
 function addSpacecraft() {
     document.getElementById("spacecraft_popup").style.display = "block";
     document.getElementById("add_spacecraft_button").classList.add("active");
     document.getElementById("spacecraft_name").focus();
 }
 
+// called when used saves the +spacecraft prompt, adds the forms for user input for spacecraft params
 function saveSpacecraft() {
     //create new spacecraft button
     const button = document.createElement('button');
@@ -234,7 +240,7 @@ function saveSpacecraft() {
         //show this sc component div
         document.getElementById(div_id).style.display = "block";
         //set global variable with active element for components to be added to
-        active_spacecraft = document.getElementById(div_id);
+        SPACECRAFT_DIV = document.getElementById(div_id);
         //unfocus any currently active spacecraft
         scb = document.getElementsByClassName("spacecraft_buttons");
         for (i = 0; i < scb.length; i++) {
@@ -244,19 +250,37 @@ function saveSpacecraft() {
         //focus new button
         button.classList.remove("not_active_border");
         button.classList.add("active_border");
-        
+
         //set global sc to this sc
-        SPACECRAFT = JSAT.sc.find(x => x.name === name);    
+        SPACECRAFT = JSAT.sc.find(x => x.name === name);
     };
-    JSAT.sc.push({name:name})
+    tmpSc = {
+        name: name,
+        body: {},
+        reactionWheels: [],
+        thrusters: [],
+        iru: {},
+        controller: {},
+    }
+    JSAT.sc.push(tmpSc)
     console.log(JSAT)
-    button.click();    
+    button.click();
 }
 
+// cancels  the +spacecraft prompt without saving
 function cancelSpacecraft() {
     document.getElementById("spacecraft_popup").style.display = "none";
     document.getElementById("add_spacecraft_button").classList.remove("active");
 }
+
+//component enumeration, freeze makes it immutable
+const component = Object.freeze({
+    body: Symbol(1),
+    reactionWheel: Symbol(2),
+    thruster: Symbol(3),
+    iru: Symbol(4),
+    controller: Symbol(5)
+})
 
 function component_menu() {
     cm = document.getElementById("component_menu");
@@ -275,106 +299,121 @@ function cancelComponentPopup() {
     document.getElementById("component_popup").style.display = "none";
 }
 
-function addComponentInput(table,name,attr,value,comp) {        
-    var tr = document.createElement("tr");    
+function addComponentInput(table, name, attr, value, comp) { // change comp to enum
+    var tr = document.createElement("tr");
 
     //create label    
     var td1 = document.createElement("td");
-    var l = document.createElement("label");    
-    l.setAttribute('for',comp.concat(name));
+    var l = document.createElement("label");
+    l.setAttribute('for', comp.concat(name));
     l.innerHTML = name;
     l.classList.add("form_font");
     var brl = document.createElement("br");
-    td1.appendChild(l);    
-    td1.appendChild(brl);    
+    td1.appendChild(l);
+    td1.appendChild(brl);
 
     //create input    
     var td2 = document.createElement("td2");
     var i = document.createElement("input");
-    i.setAttribute('type',"text");    
+    i.setAttribute('type', "text");
     i.id = comp.concat(name);
-    i.setAttribute(attr,value);
-    i.classList.add("form_input");    
+    i.setAttribute(attr, value);
+    i.classList.add("form_input");
     var bri = document.createElement("br");
-    td2.appendChild(i);    
-    td2.appendChild(bri);    
-    
+    td2.appendChild(i);
+    td2.appendChild(bri);
+
     //append to table
-    tr.appendChild(td1);        
-    tr.appendChild(td2);        
-    table.appendChild(tr);  
-    
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    table.appendChild(tr);
+
     //add onblur event caller to update global SC
-    i.onblur = function() {
+    i.onblur = function () {
         SPACECRAFT[comp][name] = i.value;
         //if this is name property, update the button text
-        if (name === "name") {            
+        if (name === "name") {
             COMPONENT.innerText = i.value;
         }
     }
 }
 
-function addComponent(t) {    
-    //create new spacecraft button
+function addComponent(info) {
+    //create new component button
     const button = document.createElement('button');
     const name = document.getElementById('component_name').value;
     button.innerText = name;
     button.id = SPACECRAFT.name.concat(name);
     button.className = "component_buttons";
 
-    //add button to component div
-    active_spacecraft.appendChild(button);
+    //add button to spacecraft div
+    SPACECRAFT_DIV.appendChild(button);
     //hide the popup
     document.getElementById("component_popup").style.display = "none";
     //deactivate button
     document.getElementById("add_component_button").classList.remove("active");
     //reset input field
-    document.getElementById("component_name").value = "enter name";
+    document.getElementById("component_name").value = "enter name"; // make placeholder?
 
-    //create div for spacecraft to add new components
+    //create div for new component
     const newDiv = document.createElement('div');
     const div_id = name.concat("_div");
     newDiv.id = div_id;
     newDiv.classList.add("component_details_form_div");
-
-    //add body to global SC
-    SPACECRAFT.body = {
-        name:name
-    }
-    console.log(t)
-    newDiv.appendChild(t);
+    newDiv.appendChild(info.table); //append table made in add<Component>()
 
     var c = document.createElement("button"); //input element, Submit button    
     c.innerText = "close";
-    c.classList.add("saveComponentDetailsButton")    
-    c.onclick = function() {     
+    c.classList.add("saveComponentDetailsButton")
+    c.onclick = function () {
         document.getElementById(div_id).style.display = "none";
         button.classList.remove("active_border");
         button.classList.add("not_active_border");
-    }    
+    }
     newDiv.appendChild(c);
 
     document.getElementById("component_details_div").appendChild(newDiv);
+
+    //add component to global SC
+    switch (info.type) {
+        case component.body:
+            JSAT.sc.body = info.sc;
+            break;
+        case component.reactionWheel:
+            console.log(info.sc)
+            JSAT.sc.reactionWheels.push(info.sc);
+            break;
+        case component.thruster:
+            JSAT.sc.thrusters.push(info.sc);
+            break;
+        case component.iru:
+            JSAT.sc.iru = info.sc;
+            break;
+        case component.controller:
+            JSAT.sc.controller = info.sc;
+            break;
+    }
+    console.log(SPACECRAFT)
     //onclick to switch component divs between spacecraft
-    button.onclick = function () {        
+    button.onclick = function () {
         comp_divs = document.getElementsByClassName("component_details_form_div");
         for (i = 0; i < comp_divs.length; i++) {
             comp_divs[i].style.display = "none";
         }
         document.getElementById(div_id).style.display = "block";
         //deactivate any currently active component
-        scb = document.getElementsByClassName("component_buttons");        
+        scb = document.getElementsByClassName("component_buttons");
         for (i = 0; i < scb.length; i++) {
             scb[i].classList.remove("active_border");
             scb[i].classList.add("not_active_border");
         }
         //focus new button
         button.classList.remove("not_active_border");
-        button.classList.add("active_border");     
-        
+        button.classList.add("active_border");        
+
         //set global component
         COMPONENT = button;
-    };        
+    };
     button.click();
 }
 
@@ -383,25 +422,78 @@ function addBody() {
     document.getElementById("component_popup").style.display = "block";
     document.getElementById("component_name").focus();
 
-    //add all input fields for component details
+    //add all input fields for component details form
     var t = document.createElement("table");
     t.classList.add("table");
-    addComponentInput(t,"name",'placeholder',"enter name","body");
-    addComponentInput(t,"ixx",'placeholder',"enter ixx","body");
-    addComponentInput(t,"iyy",'placeholder',"enter iyy","body");
-    addComponentInput(t,"izz",'placeholder',"enter izz","body");
-    addComponentInput(t,"ixy",'placeholder',"enter ixy","body");
-    addComponentInput(t,"ixz",'placeholder',"enter ixz","body");
-    addComponentInput(t,"iyz",'placeholder',"enter iyz","body");
-    addComponentInput(t,"q0",'placeholder',"enter q0","body");
-    addComponentInput(t,"w0",'placeholder',"enter w0","body");
-    addComponentInput(t,"r0",'placeholder',"enter r0","body");
-    addComponentInput(t,"v0",'placeholder',"enter v0","body");
+    addComponentInput(t, "name", 'placeholder', "enter name", "body"); //change body to enum
+    addComponentInput(t, "ixx", 'placeholder', "enter ixx", "body");
+    addComponentInput(t, "iyy", 'placeholder', "enter iyy", "body");
+    addComponentInput(t, "izz", 'placeholder', "enter izz", "body");
+    addComponentInput(t, "ixy", 'placeholder', "enter ixy", "body");
+    addComponentInput(t, "ixz", 'placeholder', "enter ixz", "body");
+    addComponentInput(t, "iyz", 'placeholder', "enter iyz", "body");
+    addComponentInput(t, "q0", 'placeholder', "enter q0", "body");
+    addComponentInput(t, "w0", 'placeholder', "enter w0", "body");
+    addComponentInput(t, "r0", 'placeholder', "enter r0", "body");
+    addComponentInput(t, "v0", 'placeholder', "enter v0", "body");
 
-    document.getElementById("add_component_save_button").onclick = addComponent.bind(this, t);
+    //info to add to SPACECRAFT
+    var tmpBody = {
+        name: "",
+        ixx: "",
+        iyy: "",
+        izz: "",
+        ixy: "",
+        ixz: "",
+        iyz: "",
+        q: "",
+        w: "",
+        r: "",
+        v: "",
+    }
+
+    info = {
+        type: component.body,
+        sc: tmpBody,
+        table: t,
+    }
+
+    document.getElementById("add_component_save_button").onclick = addComponent.bind(this, info);
 }
 
-const plotly_dark = {
+function addRw() {
+    document.getElementById("component_menu").style.display = "none";
+    document.getElementById("component_popup").style.display = "block";
+    document.getElementById("component_name").focus();
+
+    //add all input fields for component details form
+    var t = document.createElement("table");
+    t.classList.add("table");
+    addComponentInput(t, "name", 'placeholder', "enter name", "rw");
+    addComponentInput(t, "J", 'placeholder', "enter J", "rw");
+    addComponentInput(t, "kt", 'placeholder', "enter kt", "rw");
+    addComponentInput(t, "a", 'placeholder', "enter a", "rw");
+    addComponentInput(t, "w", 'placeholder', "enter w", "rw");    
+    
+    //info to add to SPACECRAFT
+    var tmp = {
+        name: "",
+        J: "",
+        kt: "",
+        a: "",
+        w: "",        
+    }
+
+    info = {
+        type: component.reactionWheel,
+        sc: tmp,
+        table: t,
+    }
+    document.getElementById("add_component_save_button").onclick = addComponent.bind(this, info);
+}
+
+
+const plotlyDark = {
     "data": {
         "barpolar": [
             {
