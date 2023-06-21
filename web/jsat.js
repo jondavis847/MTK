@@ -11,6 +11,7 @@ function init() {
     document.getElementById('connect_button').onclick = function () { connectToJsat('connect'); };
     document.getElementById('simulate_button').onclick = function () { connectToJsat('simulate'); };
     //document.getElementById('plot_state').onclick = function () { connectToJsat('plot'); };
+    loadSavedSpacecraft()
 }
 window.onload = init;
 
@@ -69,7 +70,7 @@ function connectToJsat(type) {
                 }
             });
             break;
-        case 'simulate':            
+        case 'simulate':
             socket.send(JSON.stringify({ "type": "simulate", "data": { "sc": JSAT.sc } }))
             break;
         case 'plot':
@@ -254,7 +255,7 @@ function addComponentInput(table, name, attr, value, comp) { // change comp to e
     table.appendChild(tr);
 
     //add onblur event caller to update global SC
-    i.onblur = function () {        
+    i.onblur = function () {
         COMPONENT[name] = i.value;
         //if this is name property, update the button text
         if (name === "name") {
@@ -263,12 +264,12 @@ function addComponentInput(table, name, attr, value, comp) { // change comp to e
     }
 }
 
-function addComponent(componentType) {    
+function addComponent(componentType) {
 
     const name = document.getElementById('component_name').value;
-    
+
     //create new component button
-    const button = document.createElement('button');    
+    const button = document.createElement('button');
     button.innerText = name;
     button.id = `${SPACECRAFT.name}_${name}`;
     button.className = "component_buttons";
@@ -286,11 +287,11 @@ function addComponent(componentType) {
     const newDiv = document.createElement('div');
     const div_id = name.concat("_div");
     newDiv.id = div_id;
-    newDiv.classList.add("component_details_form_div");    
+    newDiv.classList.add("component_details_form_div");
 
     //add component to global SC
     switch (componentType) {
-        case component.body:                 
+        case component.body:
             var tmp = {
                 name: name,
                 ixx: "",
@@ -304,17 +305,17 @@ function addComponent(componentType) {
                 r: "",
                 v: "",
             }
-            SPACECRAFT.body = tmp;            
+            SPACECRAFT.body = tmp;
             break;
-        case component.reactionWheel:         
+        case component.reactionWheel:
             var tmp = {
                 name: name,
                 J: "",
                 kt: "",
                 a: "",
-                w: "",        
-            }   
-            SPACECRAFT.reactionWheels.push(tmp);            
+                w: "",
+            }
+            SPACECRAFT.reactionWheels.push(tmp);
             break;
         case component.thruster:
             var tmp = {
@@ -323,14 +324,14 @@ function addComponent(componentType) {
                 r: "",
                 R: "",
             }
-            SPACECRAFT.thrusters.push(tmp);            
+            SPACECRAFT.thrusters.push(tmp);
             break;
         case component.iru:
             var tmp = {
                 name: name,
                 sigma: "",
             }
-            SPACECRAFT.iru = tmp;            
+            SPACECRAFT.iru = tmp;
             break;
         case component.controller:
             var tmp = {
@@ -339,10 +340,10 @@ function addComponent(componentType) {
             SPACECRAFT.controller = tmp;
             break;
     }
-    button.component = tmp;            
+    button.component = tmp;
     var t = tableFromObject(tmp);
     newDiv.appendChild(t); //append table made in add<Component>()
-    
+
     var c = document.createElement("button"); //input element, Submit button    
     c.innerText = "close";
     c.classList.add("saveComponentDetailsButton")
@@ -351,8 +352,8 @@ function addComponent(componentType) {
         button.classList.remove("active_border");
         button.classList.add("not_active_border");
     }
-    newDiv.appendChild(c);   
-    
+    newDiv.appendChild(c);
+
     document.getElementById("component_details_div").appendChild(newDiv);
 
     //change the name field to the current name
@@ -373,7 +374,7 @@ function addComponent(componentType) {
         }
         //focus new button
         button.classList.remove("not_active_border");
-        button.classList.add("active_border");        
+        button.classList.add("active_border");
 
         //set global component
         COMPONENT = button.component;
@@ -388,17 +389,17 @@ function tableFromObject(object) {
     t.classList.add("table");
 
     var k = Object.keys(object);
-    for (i=0; i< k.length;i++) {
+    for (i = 0; i < k.length; i++) {
         addComponentInput(t, k[i], 'placeholder', `enter ${k[i]}`, object.name); //change body to enum    
     }
     return t;
 }
 
-function addBody() {    
+function addBody() {
     document.getElementById("component_menu").style.display = "none";
     document.getElementById("component_popup").style.display = "block";
     document.getElementById("component_name").focus();
-    document.getElementById("add_component_save_button").onclick = addComponent.bind(this, component.body);    
+    document.getElementById("add_component_save_button").onclick = addComponent.bind(this, component.body);
 }
 
 function addRw() {
@@ -429,6 +430,78 @@ function addController() {
     document.getElementById("add_component_save_button").onclick = addComponent.bind(this, component.controller);
 }
 
+function loadSavedSpacecraft() {
+    var select = document.getElementById("spacecraft_loader_select");
+    for (i=0;i<savedSpacecraft.length;i++){
+        var option = document.createElement("option");
+        option.text = savedSpacecraft[i].name;
+        select.add(option)
+    }
+}
+function jsonToButtons(sc) {
+    addSpacecraft()
+    document.getElementById("spacecraft_name").value = sc.name;
+    saveSpacecraft()
+}
+
+const savedSpacecraft = [
+    {
+        name: "fake_pace",
+        sc: {
+            body: {
+                name: "body",
+                ixx: "1000",
+                iyy: "1000",
+                izz: "1000",
+                ixy: "1000",
+                ixz: "1000",
+                iyz: "1000",
+                q: "[0, 0, 0, 1]",
+                w: "zeros(3)",
+                r: "[-3.9292738554734, 5.71264013167723, 1.31199443874228]*1e6",
+                v: "[84.5551344721184, 1749.4937756303016, -7311.912202797997]",
+            },
+            reactionwheels: [
+                {
+                    name: "rw1",
+                    J: "0.25",
+                    kt: "0.075",
+                    a: "[1, 0, 0]",
+                    w: "0",
+                },
+                {
+                    name: "rw2",
+                    J: "0.25",
+                    kt: "0.075",
+                    a: "[0, 1, 0]",
+                    w: "0",
+                },
+                {
+                    name: "rw3",
+                    J: "0.25",
+                    kt: "0.075",
+                    a: "[0, 0, 1]",
+                    w: "0",
+                },
+            ],
+            thrusters: [
+                {
+                    name: "thr1",
+                    F: "1",
+                    r: "[0, -1, -1]",
+                    R: "[0 1 0; 1 0 0; 0 0 1]"
+                }
+            ],
+            iru: {
+                name: "iru",
+                sigma: "0.01",
+            },
+            controller: {
+                name: "controller"
+            },
+        }
+    }
+]
 
 const plotlyDark = {
     "data": {

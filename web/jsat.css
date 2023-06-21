@@ -153,7 +153,18 @@
     top: 0%;
     left: 25%;
     width: 25%;
-    height: 70%;
+    height: 35%;
+    background: rgba(40, 40, 40, 1);
+    box-sizing: border-box;
+    border: solid thin black;
+}
+
+.spacecraft_loader_div {
+    position: absolute;
+    top: 35%;
+    left: 25%;
+    width: 25%;
+    height: 35%;
     background: rgba(40, 40, 40, 1);
     box-sizing: border-box;
     border: solid thin black;
@@ -168,7 +179,7 @@
     position: absolute;
     top: 0%;
     width: 100%;
-    height: 5%;
+    height: 10%;
 }
 
 .add_component_button {
@@ -188,9 +199,9 @@
     box-sizing: border-box;
     border: solid thin black;
     position: absolute;
-    top:5%;
+    top:10%;
     width:100%;
-    height:10%;
+    height:20%;
     left:0%;
     display:none;
     z-index: 1;
@@ -281,8 +292,8 @@
     position: relative;
     left: 0%;
     width: 100%;
-    height: 5%;
-    top: 5%;    
+    height: 10%;
+    top: 10%;    
     font-family: 'Courier New', monospace;
 }
 
@@ -468,9 +479,33 @@
     top: 0%;
     left: 0%;
     width: 100%;
+    height: 88%;
+    background-color: rgba(35, 36, 35, 1);
+    color: aliceblue
+}
+
+.spacecraft_loader_select {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
     height: 90%;
     background-color: rgba(35, 36, 35, 1);
     color: aliceblue
+}
+
+.load_spacecraft_button {
+    background-color: rgba(20, 20, 20, 1);
+    box-sizing: border-box;
+    border: black thin solid;
+    color: aquamarine;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    width: 100%;
+    height: 12%;
 }
 
 .plot_state {
