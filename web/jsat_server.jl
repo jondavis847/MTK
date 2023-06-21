@@ -65,7 +65,7 @@ end
 
 function dict_to_spacecraft(d)   
    bstruct = bdict_to_bstruct(d["body"])      
-   rwstruct = rwdict_to_rwstruct.(d["reactionwheels"])      
+   rwstruct = rwdict_to_rwstruct.(d["reactionWheels"])      
    thrstruct = thrdict_to_thrstruct.(d["thrusters"])      
    irustruct = irudict_to_irustruct(d["iru"])   
    controller = Controller(
