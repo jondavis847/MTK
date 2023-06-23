@@ -37,11 +37,16 @@ function jsat_server()
          if julia_msg["type"] == "simulate"
             send(ws, to_console("simulating..."))
             scdict = julia_msg["data"]["sc"]
-            sc = dict_to_spacecraft(scdict)            
+            sc = dict_to_spacecraft(scdict)
+            println(sc)
             make!(sc)
-            
+
+            simdict = julia_msg["data"]["sim"]
+            println(simdict)
+            sim = dict_to_sim(simdict)
+            println(sim)
             t = time()
-            sol, sim = simulate(sc, (0, 100))
+            sol, ens = simulate(sc, sim.tspan)
             dt = time() - t
 
             println("Simulation complete in $dt seconds")
@@ -63,11 +68,17 @@ function jsat_server()
    end
 end
 
-function dict_to_spacecraft(d)   
-   bstruct = bdict_to_bstruct(d["body"])      
-   rwstruct = rwdict_to_rwstruct.(d["reactionWheels"])      
-   thrstruct = thrdict_to_thrstruct.(d["thrusters"])      
-   irustruct = irudict_to_irustruct(d["iru"])   
+function dict_to_sim(d)
+   (
+      tspan=eval(Meta.parse(d["tspan"])),
+   )
+end
+
+function dict_to_spacecraft(d)
+   bstruct = bdict_to_bstruct(d["body"])
+   rwstruct = rwdict_to_rwstruct.(d["reactionWheels"])
+   thrstruct = thrdict_to_thrstruct.(d["thrusters"])
+   irustruct = irudict_to_irustruct(d["iru"])
    controller = Controller(
       name=:controller
    )

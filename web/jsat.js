@@ -1,5 +1,8 @@
 JSAT = {
-    sc: {}
+    sc: {},
+    sim:{
+        tspan: "(0,10)"
+    },
 };
 
 let SPACECRAFT // current spacecraft
@@ -10,7 +13,9 @@ let COMPONENT_BUTTON //current component button
 function init() {
     document.getElementById('connect_button').onclick = function () { connectToJsat('connect'); };
     document.getElementById('simulate_button').onclick = function () { connectToJsat('simulate'); };
-    //document.getElementById('plot_state').onclick = function () { connectToJsat('plot'); };
+    document.getElementById('plot_state').onclick = function () { connectToJsat('plot'); };
+    document.getElementById('sim_start_time').onblur = getSimOptions;
+    document.getElementById('sim_stop_time').onblur = getSimOptions;
     loadSavedSpacecraft()
 }
 window.onload = init;
@@ -60,7 +65,7 @@ function connectToJsat(type) {
                         log.value += '\nreceived states from jsat server';
                         var select = document.getElementById("state_select");
                         var data = obj.data;
-                        for (i of data.sort()) {
+                        for (let i of data.sort()) {
                             var opt = document.createElement('option')
                             opt.value = i;
                             opt.innerHTML = i;
@@ -71,7 +76,7 @@ function connectToJsat(type) {
             });
             break;
         case 'simulate':
-            socket.send(JSON.stringify({ "type": "simulate", "data": { "sc": JSAT.sc } }))
+            socket.send(JSON.stringify({ "type": "simulate", "data": {"sim":JSAT.sim, "sc": JSAT.sc } }))
             break;
         case 'plot':
             var select = document.getElementById("state_select");
@@ -80,6 +85,12 @@ function connectToJsat(type) {
     }
 }
 
+function getSimOptions() {
+    tstart = document.getElementById("sim_start_time").value;
+    tstop = document.getElementById("sim_stop_time").value;
+    JSAT.sim.tspan = `(${tstart},${tstop})`;
+    console.log(JSAT)
+}
 function jsat_plot(data) {
     var x_data = data.time;
     var y_data = data.data;
@@ -98,7 +109,7 @@ function jsat_plot(data) {
     var layout = {
         title: name,
         grid: { rows: y_data[0].length, columns: 1, pattern: 'independent' },
-        template: plotly_dark,
+        template: plotlyDark,
     };
     console.log("Plotting")
     Plotly.newPlot("plots", data, layout, { scrollZoom: true });
@@ -110,13 +121,13 @@ function changeTab(evt, newTab) {
 
     // Get all elements with class="tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
+    for (let i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
     }
 
     // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tab_links");
-    for (i = 0; i < tablinks.length; i++) {
+    for (let i = 0; i < tablinks.length; i++) {
         tablinks[i].classList.remove("active_border");
     }
 
@@ -159,7 +170,7 @@ function saveSpacecraft() {
     button.onclick = function () {
         //display none all component_divs
         comp_divs = document.getElementsByClassName("component_div");
-        for (i = 0; i < comp_divs.length; i++) {
+        for (let i = 0; i < comp_divs.length; i++) {
             comp_divs[i].style.display = "none";
         }
         //show this sc component div
@@ -168,7 +179,7 @@ function saveSpacecraft() {
         SPACECRAFT_DIV = document.getElementById(div_id);
         //unfocus any currently active spacecraft
         scb = document.getElementsByClassName("spacecraft_buttons");
-        for (i = 0; i < scb.length; i++) {
+        for (let i = 0; i < scb.length; i++) {
             scb[i].classList.remove("active_border");
             scb[i].classList.add("not_active_border");
         }
@@ -188,8 +199,7 @@ function saveSpacecraft() {
         iru: {},
         controller: {},
     }
-    JSAT.sc = tmpSc; //current only 1 sc allowed
-    console.log(JSAT)
+    JSAT.sc = tmpSc; //current only 1 sc allowed    
     button.click();
 }
 
@@ -362,13 +372,13 @@ function addComponent(componentType) {
     //onclick to switch component divs between spacecraft
     button.onclick = function () {
         var comp_divs = document.getElementsByClassName("component_details_form_div");
-        for (i = 0; i < comp_divs.length; i++) {
+        for (let i = 0; i < comp_divs.length; i++) {
             comp_divs[i].style.display = "none";
         }
         document.getElementById(div_id).style.display = "block";
         //deactivate any currently active component
         var scb = document.getElementsByClassName("component_buttons");
-        for (i = 0; i < scb.length; i++) {
+        for (let i = 0; i < scb.length; i++) {
             scb[i].classList.remove("active_border");
             scb[i].classList.add("not_active_border");
         }
@@ -377,8 +387,7 @@ function addComponent(componentType) {
         button.classList.add("active_border");
 
         //set global component
-        COMPONENT = button.component;
-        console.log(COMPONENT)
+        COMPONENT = button.component;        
         COMPONENT_BUTTON = button;
     };
     button.click();
@@ -389,7 +398,7 @@ function tableFromObject(object) {
     t.classList.add("table");
 
     var k = Object.keys(object);
-    for (i = 0; i < k.length; i++) {
+    for (let i = 0; i < k.length; i++) {
         addComponentInput(t, k[i], 'placeholder', `enter ${k[i]}`, object.name); //change body to enum    
     }
     return t;
@@ -430,18 +439,73 @@ function addController() {
     document.getElementById("add_component_save_button").onclick = addComponent.bind(this, component.controller);
 }
 
+// just loads the options from savedSpacecraft when the window loads and adds it to the loadselect
 function loadSavedSpacecraft() {
     var select = document.getElementById("spacecraft_loader_select");
-    for (i=0;i<savedSpacecraft.length;i++){
+    for (let i=0;i<savedSpacecraft.length;i++){
         var option = document.createElement("option");
-        option.text = savedSpacecraft[i].name;
+        option.text = savedSpacecraft[i].name;        
+        option.value = i;        
         select.add(option)
     }
 }
-function jsonToButtons(sc) {
+
+//actually loads the selected savedSpacecraft into the console and makes buttons
+function loadSpacecraft() {
+    scIndex = document.getElementById("spacecraft_loader_select").value;
+    sc = savedSpacecraft[scIndex].sc;    
     addSpacecraft()
-    document.getElementById("spacecraft_name").value = sc.name;
+    document.getElementById("spacecraft_name").value = savedSpacecraft[scIndex].name;
     saveSpacecraft()
+
+    //add the body
+    addBody()
+    document.getElementById("component_name").value = sc.body.name;
+    addComponent(component.body);
+    populateInputFields(sc.body);
+    
+    //add the rws
+    for (let i=0;i<sc.reactionwheels.length;i++) {        
+        addRw()
+        document.getElementById("component_name").value = sc.reactionwheels[i].name;
+        addComponent(component.reactionWheel);
+        populateInputFields(sc.reactionwheels[i]);
+    }    
+
+    //add the thrusters
+    for (let i=0;i<sc.thrusters.length;i++) {
+        addThr()
+        document.getElementById("component_name").value = sc.thrusters[i].name;
+        addComponent(component.thruster);
+        populateInputFields(sc.thrusters[i]);
+    }    
+    
+    //add the iru    
+    addIru()
+    document.getElementById("component_name").value = sc.iru.name;
+    addComponent(component.iru);
+    populateInputFields(sc.iru);  
+
+    //add the controller    
+    addController()
+    document.getElementById("component_name").value = sc.controller.name;
+    addComponent(component.controller);
+    populateInputFields(sc.controller);  
+
+    console.log(JSAT.sc)
+}
+
+//takes fields from savedSpacecraft components and populates thier component fields when loaded
+function populateInputFields(comp) {
+    k = Object.keys(comp);
+    for (let i=0;i<k.length;i++) {
+        //focus first so that onblur will populate JSAT.sc
+        document.getElementById(`${comp.name}_${k[i]}`).focus()       
+        //replace input field text with the savedSpacecraft values         
+        document.getElementById(`${comp.name}_${k[i]}`).value = comp[k[i]];   
+        //blur the field so that it updates SPACECRAFT and JSAT.sc
+        document.getElementById(`${comp.name}_${k[i]}`).blur()
+    } 
 }
 
 const savedSpacecraft = [
@@ -453,9 +517,9 @@ const savedSpacecraft = [
                 ixx: "1000",
                 iyy: "1000",
                 izz: "1000",
-                ixy: "1000",
-                ixz: "1000",
-                iyz: "1000",
+                ixy: "0",
+                ixz: "0",
+                iyz: "0",
                 q: "[0, 0, 0, 1]",
                 w: "zeros(3)",
                 r: "[-3.9292738554734, 5.71264013167723, 1.31199443874228]*1e6",
@@ -488,9 +552,27 @@ const savedSpacecraft = [
                 {
                     name: "thr1",
                     F: "1",
+                    r: "[1, 0, -1]",
+                    R: "[0 1 0; 1 0 0; 0 0 1]"
+                },
+                {
+                    name: "thr2",
+                    F: "1",
+                    r: "[-1, 0, 1]",
+                    R: "[0 1 0; 1 0 0; 0 0 1]"
+                },
+                {
+                    name: "thr3",
+                    F: "1",
+                    r: "[0, 1, -1]",
+                    R: "[0 1 0; 1 0 0; 0 0 1]"
+                },
+                {
+                    name: "thr4",
+                    F: "1",
                     r: "[0, -1, -1]",
                     R: "[0 1 0; 1 0 0; 0 0 1]"
-                }
+                },
             ],
             iru: {
                 name: "iru",
@@ -502,6 +584,10 @@ const savedSpacecraft = [
         }
     }
 ]
+
+
+
+
 
 const plotlyDark = {
     "data": {

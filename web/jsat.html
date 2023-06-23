@@ -23,15 +23,18 @@
       </div>
       <button id="connect_status" class="connect_status top_bar_button"> disconnected </button>
     </div>
+    
+    <!-- console log -->
+    <textarea class="console_log" id="console_log">welcome to jsat!</textarea>
 
     <!-- main area -->
     <div class="main_div" id="main_div">
+
       <div class="tab">
 
         <!-- simulation tab -->
 
         <div class="simulation_tab tabcontent" id="simulation_tab">
-          <textarea class="console_log" id="console_log">welcome to jsat!</textarea>
 
           <!-- simulation options -->
           <div class="simulation_options_div" id="simulation_options_div">
@@ -82,7 +85,8 @@
           </div>
           <!-- spacecraft loader -->
           <div class="spacecraft_loader_div" id="spacecraft_loader_div">
-            <select class="spacecraft_loader_select" name="spacecraft_loader" id="spacecraft_loader_select" multiple></select>
+            <select class="spacecraft_loader_select" name="spacecraft_loader" id="spacecraft_loader_select"
+              multiple></select>
             <button id="load_spacecraft_button" class="load_spacecraft_button" onclick="loadSpacecraft()">load</button>
           </div>
 
@@ -95,8 +99,10 @@
               <button id="add_rw_button" class="component_button" onclick="addRw()"> + reaction wheel </button>
               <button id="add_thr_button" class="component_button" onclick="addThr()"> + thruster </button>
               <button id="add_iru_button" class="component_button" onclick="addIru()"> + iru </button>
-              <button id="add_controller_button" class="component_button" onclick="addController()"> + controller </button>
-              <button id="cancel_component_button" class="cancel_component_button" onclick="cancelComponentMenu()"> cancel
+              <button id="add_controller_button" class="component_button" onclick="addController()"> + controller
+              </button>
+              <button id="cancel_component_button" class="cancel_component_button" onclick="cancelComponentMenu()">
+                cancel
               </button>
             </div>
             <div class="component_popup" id="component_popup">
@@ -129,7 +135,7 @@
           <!-- states -->
           <div class="states" id="states">
             <select class="state_select" name="states" id="state_select" multiple></select>
-            <button id="plot_state tab" class="plot_state"> plot </button>
+            <button id="plot_state" class="plot_state"> plot </button>
           </div>
           <!-- plot viewer -->
           <div class="plots" id="plots"></div>
